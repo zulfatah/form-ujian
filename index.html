@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Jumlah & Rata-rata</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            width: 100px;
+            margin: 5px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Hitung Jumlah & Rata-rata</h2>
+    <select id="namaSelect"></select>
+    <br>
+    <input type="number" id="num1" placeholder="Input 1">
+    <input type="number" id="num2" placeholder="Input 2">
+    <input type="number" id="num3" placeholder="Input 3">
+    <input type="number" id="num4" placeholder="Input 4">
+    <br>
+    <button onclick="hitung()">Hitung</button>
+    <p>Jumlah: <span id="hasilJumlah">0</span></p>
+    <p>Rata-rata: <span id="hasilRata2">0</span></p>
+    
+    <h3>Data yang telah dihitung</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Input 1</th>
+                <th>Input 2</th>
+                <th>Input 3</th>
+                <th>Input 4</th>
+                <th>Jumlah</th>
+                <th>Rata-rata</th>
+            </tr>
+        </thead>
+        <tbody id="dataList"></tbody>
+    </table>
+
+    <script>
+        let namaList = [
+            "Awwalun Zakia", "Azhari Umar Abdullah", "Dhamiri Fadil Anwaruddin",
+            "Firmansyah Putra Pratama Ekosah Putro Is", "Hamdani Rusli K", "Haris Annabawi Badruddin",
+            "Ilham Maulana Nurdin", "Marwis Khairul Umam Ansari", "Misbahul Azis Iskandar",
+            "Muhammad Afrian", "Muhammad Agil Rasyidin", "Muhammad Alfiqi Fazzil",
+            "Muhammad Arfy Syafruddin", "Muhammad Arif Al Quasar Safrizal Usma", "Muhammad Asyraf Hamdani Mokhtar",
+            "Muhammad Azzam", "Muhammad Fakri Maulana Arsyadi", "Muhammad Fathir Safari",
+            "Muhammad Ihsan Nasrullah", "Muhammad Rajul Zainal Abidin", "Muhammad Ridha Nurdin M. Thaib",
+            "Muhammad Safrizal Ibrahim", "Muhammad Syafi'I M. Jamil", "Muhammad Syarafi Israunuddin",
+            "Muhammad Wali Al Khalidi Yusliadi AR", "Muhammad Zaki Alfaris Suryadi", "Muhammad Zakir Kafrawi Irwan Jafar",
+            "Munzir M. Nur", "Riski Irbamawi Jamaluddin", "Rizhayirrifiqi Mansurdin Abdullah",
+            "Waisul Qirani Muhammadiyah Usman", "Zulfadzli Mukhtaruddin"
+        ];
+        
+        let select = document.getElementById("namaSelect");
+        namaList.forEach(nama => {
+            let option = document.createElement("option");
+            option.value = nama;
+            option.textContent = nama;
+            select.appendChild(option);
+        });
+        
+        let storedData = JSON.parse(localStorage.getItem("dataList")) || {};
+        let dataList = document.getElementById("dataList");
+
+        function updateTable() {
+            dataList.innerHTML = "";
+            namaList.forEach((nama, index) => {
+                let rowData = storedData[nama] || { input1: "", input2: "", input3: "", input4: "", jumlah: "", rata2: "" };
+                let tr = `<tr>
+                    <td>${index + 1}</td>
+                    <td>${nama}</td>
+                    <td>${rowData.input1}</td>
+                    <td>${rowData.input2}</td>
+                    <td>${rowData.input3}</td>
+                    <td>${rowData.input4}</td>
+                    <td>${rowData.jumlah}</td>
+                    <td>${rowData.rata2}</td>
+                </tr>`;
+                dataList.innerHTML += tr;
+            });
+        }
+        
+        function hitung() {
+            let nama = document.getElementById("namaSelect").value;
+            let inputs = document.querySelectorAll("input[type='number']");
+            let values = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+            let jumlah = values.reduce((a, b) => a + b, 0);
+            let rata2 = jumlah / values.length;
+
+            document.getElementById('hasilJumlah').textContent = jumlah;
+            document.getElementById('hasilRata2').textContent = rata2.toFixed(2);
+
+            storedData[nama] = {
+                input1: values[0],
+                input2: values[1],
+                input3: values[2],
+                input4: values[3],
+                jumlah: jumlah,
+                rata2: rata2.toFixed(2)
+            };
+
+            localStorage.setItem("dataList", JSON.stringify(storedData));
+            updateTable();
+        }
+        
+        updateTable();
+    </script>
+</body>
+</html>
